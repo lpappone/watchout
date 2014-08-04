@@ -10,11 +10,14 @@ var enemies;
 var level;
 var interval;
 var hits = 0;
+var score = 0;
+var scoreStart; 
+var highScore = 0;
 
 function createCreatures(num) {
   var creatures = [];
   for (var i = 0; i <= num; i++) {
-    creatures[i] = {'cx': Math.random()*700, 'cy': Math.random()*450, 'radius': 10, 'color': 'green'};
+    creatures[i] = {'cx': Math.random()*700, 'cy': Math.random()*450, 'radius': 10, 'color': 'green', 'isHit': false};
   }
   return creatures;
 };
@@ -45,6 +48,7 @@ var start = function() {
   if (interval) {
     clearInterval(interval);
   }
+  scoreKeeper(); 
   var creatures = createCreatures(mode[level]['numCreatures']);
   enemies = gameBoard.selectAll('circle') 
     .data(creatures)
@@ -64,36 +68,39 @@ var gameTurn = function() {
     .attr("cy", function() {return Math.random()*450})
     .duration(mode[level]['speed'])
     .tween('custom', function() { 
-      var isHit = false;
       return function(t) {
-        if (t === 1) {
-          isHit = false;
-        }
         var enemy = d3.select(this);
-        var xDiff = enemy.attr('cx') - player.attr('cx');
-        var yDiff = enemy.attr('cy') - player.attr('cy');
-        var radiusSum = parseFloat(enemy.attr('r')) + parseFloat(player.attr('r'));
-        var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-        if (distance < radiusSum && !isHit) {
-          hits++;
-          isHit = true;
-          $('.collisions span').text(hits);
+        var datum = enemy.datum();
+        if (datum.isHit === false) {
+          var xDiff = enemy.attr('cx') - player.attr('cx');
+          var yDiff = enemy.attr('cy') - player.attr('cy');
+          var radiusSum = parseFloat(enemy.attr('r')) + parseFloat(player.attr('r'));
+          var distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+          if (distance < radiusSum) {
+            hits++;
+            datum.isHit = true; 
+            $('.collisions span').text(hits);
+            if (score > highScore) {
+              highScore = score; 
+              $('.high span').text(score);
+            }
+            score = 0; 
+            $('.current span').text(score);
+          }
         }
-
+        if (t === 1) {
+          datum.isHit = false; 
+        }
       }
     })
 };
 
-// var scoreCount = function() {
-//   // console.log('called scorecount')
-//   // debugger
-//   hits = $('.player').collision('.enemies');
-//   console.log(hits)
-//   if (hits.length) debugger;
-//   console.log('hits', hits.length)
-//   var hitsnumber = parseInt($('.collisions span').text()) + hits.length;
-//   $('.collisions span').text(hitsnumber);
-// }
+var scoreKeeper = function() {
+  scoreStart = setInterval(function(){
+    score++;
+    $('.current span').text(score);
+  }, 1000);
+}
 
 $('.start').on('click', function () {
   level = $('input[name=level]:checked').val();
@@ -101,11 +108,19 @@ $('.start').on('click', function () {
 });
 
 $('.stop').on('click', function() {
-  console.log('stop');
+  hits = 0; 
+  $('.collisions span').text(hits);
   gameBoard.selectAll('.enemies').transition().attr('opacity', 0).duration(500).remove();
   $('.start').attr('disabled', false);
   if (interval) {
     clearInterval(interval);
+  if (score > highScore) {
+    highScore = score; 
+    $('.high span').text(score);
+  }
+  score = 0; 
+  $('.current span').text(score);
+  clearInterval(scoreStart);
   }
 });
 
