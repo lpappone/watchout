@@ -1,0 +1,23 @@
+/* your beautiful css styling goes here! */
+
+/* Note: an asteroid image is included in this repo. 
+Feel free to use it if you like. */
+
+.player {
+  fill: yellow;
+  stroke: black;
+  stroke-width: 1;
+}
+
+.enemies {
+  animation: spin 0.35s infinite linear;
+}
+
+@keyframes spin{
+  0%: {
+    transform: rotateZ(0deg);
+  }
+  100%: {
+    transform: rotateZ(360deg);
+  }
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' type='css' href='styles.css'> 
+  </head>
+  <body>
+    <div class="scoreboard">
+      <!-- Modify the scoreboard when important events occur in your game! -->
+      <div class="high">High score: <span>0</span></div>
+      <div class="current">Current score: <span>0</span></div>
+      <div class="collisions">Collisions: <span class='hits'>0</span></div>
+      <input type='radio' name='level' value='easy'>
+      <label>easy</label>
+      <input type='radio' name='level' value='normal' checked>
+      <label>normal</label>
+      <input type='radio' name='level' value='hard'>
+      <label>hard</label>
+      <button class="start">Start</button>
+      <button class='stop'>Stop</button>
+    </div>
+    <script src="d3.js" charset="utf-8"></script>
+    <!--script src='vid.js'></script-->
+    <script src="lib/jquery.js"></script>
+    <script src="jquery-1.8.3.min.js"></script>
+    <script src="jquery-collision.js"></script>
+    <script src='watchout.js'></script>
+  </body>
+</html>
